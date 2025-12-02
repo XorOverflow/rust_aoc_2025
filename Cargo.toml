@@ -2,5 +2,5 @@
 
 resolver = "2"
 
-members = [ "aoc",
+members = [ "aoc", "day_01",
 ]
