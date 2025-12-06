@@ -31,6 +31,42 @@ fn sum_invalid_ids(r: RangeInclusive<u64>) -> u64 {
     }
     invalid
 }
+
+fn sum_invalid_ids_any(r: RangeInclusive<u64>) -> u64 {
+    let dbg = is_debug();
+    let mut invalid: u64 = 0;
+
+    'ids: for k in r {
+        let digits: Vec<char> = k.to_string().chars().collect();
+        let dlen = digits.len();
+
+        'subsizes: for subsize in 1..dlen {
+            // Not divisible exactly
+            if dlen % subsize != 0 {
+                continue 'subsizes;
+            }
+
+            let parts = dlen / subsize;
+
+            let part_1 = &digits[..subsize];
+            for p in 0..parts {
+                let part_n = &digits[(subsize * p)..(subsize * (p + 1))];
+                if part_1 != part_n {
+                    continue 'subsizes;
+                }
+            }
+            if dbg {
+                println!("{k} is invalid with subsize {subsize} !");
+            }
+            invalid += k;
+            // Don't test other subdivisions, which could count the
+            // same ID several times
+            continue 'ids;
+        }
+    }
+    invalid
+}
+
 fn main() {
     let dbg = is_debug();
     // The input is if inclusive range (end is part of the range),
@@ -64,6 +100,11 @@ fn main() {
         println!("testing {:?}", k);
         total_invalid += sum_invalid_ids(k.clone());
     }
-
     println!("== Part 1: {total_invalid}");
+
+    let mut total_invalid2 = 0;
+    for k in pairs.iter() {
+        total_invalid2 += sum_invalid_ids_any(k.clone());
+    }
+    println!("== Part 2: {total_invalid2}");
 }
