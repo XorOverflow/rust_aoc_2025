@@ -51,6 +51,16 @@ impl<T: std::clone::Clone> Grid<T> {
         }
     }
 
+    /// When caller doesn't care for out-of-bound and a default value
+    /// replacement is enough
+    pub fn checked_get_or_default(&self, x: isize, y: isize, def: T) -> T {
+        if x < 0 || y < 0 || x as usize >= self.width || y as usize >= self.height {
+            def
+        } else {
+            self.s[x as usize + (y as usize) * self.width].clone()
+        }
+    }
+
     pub fn get(&self, x: usize, y: usize) -> T {
         if x >= self.width || y >= self.height {
             panic!("array access {},{} out of bounds", x, y);
@@ -432,7 +442,7 @@ impl GridBuilder<usize> {
     /// Add a new row at the end of the builder, converting
     /// chars into single digits.
     /// When it's the first time, this row defines the width
-    /// of the grid. All other rows must have the same width
+    /// of the grid. All other rows must have the same width()
     /// else a panic is emitted.
     pub fn append_char_map(&mut self, line: &str) {
         let mut digits = Vec::<usize>::with_capacity(self.width);
