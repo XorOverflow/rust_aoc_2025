@@ -74,7 +74,7 @@ impl<T: std::clone::Clone> Grid<T> {
         if y >= self.height {
             panic!("array row {y} out of bounds");
         }
-        &self.s[y * self.width..y * self.width + self.height]
+        &self.s[(y * self.width)..(y+1) * self.width]
     }
 
     pub fn get_mut(&mut self, x: isize, y: isize) -> Option<&mut T> {
